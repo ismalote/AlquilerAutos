@@ -1,5 +1,4 @@
 package controlador;
-
 import java.util.Date;
 import java.util.Vector;
 
@@ -15,94 +14,70 @@ public class EmpresaAlquiler {
 	
 	public EmpresaAlquiler() {
 		super();
-		autos = new Vector<Auto>();
-		alquileres = new Vector<Alquiler>();
+		this.autos = new Vector<Auto>();
+		this.alquileres = new Vector<Alquiler>();
 	}
 	
 	private Auto buscarAuto(String patente){
 		Auto auto = null;
-		
-		for(int i=0; i<autos.size() && auto == null; i++){
-			if(autos.get(i).getPatente().equalsIgnoreCase(patente)){
-				auto = autos.get(i);
+		for(Auto a: this.autos){
+			if(a.getPatente().equalsIgnoreCase(patente)){
+				auto = a;
 			}
 		}
-		
 		return auto;
 	}
 	
 	public boolean existeAuto(String patente){
-		boolean exist = false;
-		
-		for(int i = 0; i<autos.size() && !exist; i++){
-			if(autos.get(i).getPatente().equalsIgnoreCase(patente)){
-				exist = true;
-			}
-		}
-		
-		return exist;
+		Auto auto = this.buscarAuto(patente);
+		return (auto != null) ? true : false;		
 	}
 	
-	public void crearAutoDeportivo(String patente, String modelo, int capacidad, float precioKm, float precioAdicional){
-		Auto auto = buscarAuto(patente);
-		
-		if(auto == null){
-			auto = new AutoDeportivo(patente, modelo, capacidad, precioKm, precioAdicional);
-			
-			autos.add(auto);
-		}else{
-			System.out.println("El auto ya existe");
+	public void crearAutoDeportivo(String patente, String modelo, int capacidad, float precioPorKm, float precioAdicional){
+		boolean existeAuto = this.existeAuto(patente);
+		if(!existeAuto){
+			AutoDeportivo autoDeportivo = new AutoDeportivo(patente, modelo, capacidad, precioPorKm, precioAdicional);
+			this.autos.add(autoDeportivo);
+			System.out.println("El auto " +  patente + " ha sido creado con éxito.");
 		}
+		System.out.println("El auto " + patente + " ya existe.");
 	}
 	
-	public void crearAutoSedan(String patente, String modelo, int capacidad, float precioKm){
-		Auto auto = buscarAuto(patente);
-		
-		if(auto == null){
-			auto = new AutoSedan(patente, modelo, capacidad, precioKm);
-			
-			autos.add(auto);
-		}else{
-			System.out.println("El auto ya existe");
+	public void crearAutoSedan(String patente, String modelo, int capacidad, float precioPorKm){
+		boolean existeAuto = this.existeAuto(patente);
+		if(!existeAuto){
+			AutoSedan autoSedan = new AutoSedan(patente, modelo, capacidad, precioPorKm);
+			this.autos.add(autoSedan);
+			System.out.println("El auto " +  patente + " ha sido creado con éxito.");
 		}
-	}
-	
-	public int registrarAlquiler(String patente, Date fechaDesde, Date fechaHasta, float km){
-		Auto auto = buscarAuto(patente);
-		
-		if(auto != null){
-			Alquiler alquiler = new Alquiler(auto, fechaDesde, fechaHasta, km);
-			
-			alquileres.add(alquiler);
-			
-			return 1;
-		}
-		
-		return 0;
-	}
-	
-	public float confirmarAlquiler(int numero){
-		Alquiler alquiler = buscarAlquiler(numero);
-		float monto = 0;
-		
-		
-		if(alquiler != null){
-			monto = alquiler.getMontoAlquiler();
-		}
-		
-		return monto;
+		System.out.println("El auto " + patente + " ya existe.");
 	}
 
-	private Alquiler buscarAlquiler(int numero) {
+	public int registrarAlquiler(String patente, Date fechaDesde, Date fechaHasta, float precioKm){		
+		Auto auto = this.buscarAuto(patente);
+		if(auto != null && auto.getDisponible()){
+			Alquiler alquiler = new Alquiler(auto, fechaDesde, fechaHasta, precioKm);
+			this.alquileres.add(alquiler);
+			return alquiler.getNumero();
+		}
+		return -1;
+	}
+	
+	private Alquiler buscarAlquiler(int numero){
 		Alquiler alquiler = null;
-		
-		for(int i=0; i<alquileres.size() && alquiler == null; i++){
-			if(alquileres.get(i).getNumero() == numero){
-				alquiler = alquileres.get(i);
+		for(Alquiler a: alquileres){
+			if(a.getNumero() == numero){
+				alquiler = a;
 			}
 		}
-		
 		return alquiler;
 	}
 	
+	public float confirmarAlquiler(int numero){
+		Alquiler alquiler = this.buscarAlquiler(numero);
+		if(alquiler != null){
+			return alquiler.getMontoAlquiler();
+		}
+		return 0;
+	}
 }
