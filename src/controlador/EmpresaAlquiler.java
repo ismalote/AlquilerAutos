@@ -58,6 +58,7 @@ public class EmpresaAlquiler {
 		if(auto != null && auto.getDisponible()){
 			Alquiler alquiler = new Alquiler(auto, fechaDesde, fechaHasta, precioKm);
 			this.alquileres.add(alquiler);
+			auto.setDisponible(false);
 			return alquiler.getNumero();
 		}
 		return -1;
