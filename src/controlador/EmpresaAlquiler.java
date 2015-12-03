@@ -30,7 +30,7 @@ public class EmpresaAlquiler {
 	
 	public boolean existeAuto(String patente){
 		Auto auto = this.buscarAuto(patente);
-		return (auto != null) ? true : false;		
+		return auto != null;		
 	}
 	
 	public void crearAutoDeportivo(String patente, String modelo, int capacidad, float precioPorKm, float precioAdicional){
